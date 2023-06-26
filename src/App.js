@@ -1,12 +1,16 @@
 import './index.css';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 
 function App() {
   /* To do List sử dụng useState() */
   const [job, setJob] = useState('')
   const [jobs, setJobs] = useState(() =>{
+    const defaultJobs = []
     const storageJobs = JSON.parse(localStorage.getItem('jobs'))
+    if(storageJobs === null){
+      storageJobs = JSON.parse(localStorage.setItem('jobs', JSON.stringify(defaultJobs)))
+    }
     return storageJobs
   })
 
@@ -20,6 +24,7 @@ function App() {
       return newJobs
     })
     setJob('')
+    inputRef.current.focus()
   }
 
   const enterSubmit = (event) => {
@@ -33,15 +38,18 @@ function App() {
         return newJobs
       })
       setJob('')
+      inputRef.current.focus()
     }
   }
   
+  const inputRef = useRef()
   return (
     <div className='2xl:flex p-12 bg-purple-200 h-full min-h-screen w-full text-center flex flex-row divide-x divide-violet-500'>
       <div className='basis-2/3 '>
         <h1 className='text-6xl border-l mb-24 italic'>What's the plan for today?</h1>
         <input 
-          value={job} 
+          value={job}
+          ref={inputRef}
           onChange={e => setJob(e.target.value)}
           onKeyDown={enterSubmit}
           placeholder='Need to do?'
